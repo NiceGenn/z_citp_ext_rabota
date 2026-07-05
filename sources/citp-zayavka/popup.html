@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <link rel="stylesheet" href="popup.css">
+  <title>ЦИТП Заявка (Копия)</title>
+</head>
+<body>
+  <!-- Шапка -->
+  <div class="header">
+    <div class="header-logo">ЦИТП</div>
+    <div class="header-title">Формирование заявки</div>
+    <div class="header-ver" id="header-ver"></div>
+  </div>
+
+  <!-- Вшитый шаблон -->
+  <div class="embedded-row">
+    <div class="emb-badge">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#059669" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+      <span>Шаблон</span>
+      <span class="emb-name">ЗаявкаЦИТП.docx</span>
+    </div>
+  </div>
+
+  <!-- CTA: Загрузить базу АЦК -->
+  <label class="cta-db-btn" id="lbl-db">
+    <input type="file" id="inp-db" accept=".xlsx" hidden>
+    <svg class="cta-icon" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+      <ellipse cx="12" cy="5" rx="9" ry="3"/>
+      <path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/>
+      <path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/>
+    </svg>
+    <div class="cta-text">
+      <span class="cta-title">Загрузить базу АЦК</span>
+      <span class="cta-sub" id="db-count">загрузка…</span>
+    </div>
+    <svg class="cta-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+  </label>
+
+  <!-- Малая кнопка: Загрузить шаблон -->
+  <div class="upload-row">
+    <label class="upload-btn" title="Заменить встроенный шаблон">
+      <input type="file" id="inp-template" accept=".docx" hidden>
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+      Загрузить свой шаблон .docx
+    </label>
+  </div>
+
+  <!-- CTA: Зона загрузки сертификатов -->
+  <label class="drop-zone" id="dz-cert">
+    <input type="file" id="inp-cert" accept=".cer" multiple hidden>
+    <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+      <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+      <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+    </svg>
+    <span class="dz-label">Загрузить сертификаты .cer</span>
+    <span class="dz-sub">перетащите или нажмите для выбора (можно несколько)</span>
+  </label>
+  <div id="cert-list"></div>
+  <div id="cert-clear-row" style="display:none">
+    <button class="btn-clear-all" id="btn-clear-all">Очистить всё</button>
+  </div>
+
+  <!-- Поля -->
+  <div class="options-block" style="margin: 10px 16px 0">
+    <div class="field-row">
+      <div class="field">
+        <label>Роль субъекта в ЦИТП</label>
+        <div class="citp-checks role-checks--disabled" id="fld-role-group">
+          <label class="check-label check-label--dim"><input type="checkbox" name="role" value="Руководитель" disabled> Руководитель</label>
+          <label class="check-label check-label--dim"><input type="checkbox" name="role" value="Бухгалтер" disabled> Бухгалтер</label>
+        </div>
+        <div class="field-hint">Берётся из базы АЦК</div>
+      </div>
+      <div class="field field-sm">
+        <label>Действие</label>
+        <select id="fld-action">
+          <option value="Добавить">Добавить</option>
+          <option value="Удалить">Удалить</option>
+          <option value="Заменить" selected>Заменить</option>
+          <option value="Заблокировать">Заблокировать</option>
+        </select>
+      </div>
+    </div>
+  </div>
+  <div class="options-block" style="margin: 8px 16px 0">
+    <div class="field">
+      <label>Наименование системы</label>
+      <div class="citp-checks" id="fld-citp-group">
+        <label class="check-label"><input type="checkbox" name="citp" value="АЦК-Финансы" checked> АЦК-Финансы</label>
+        <label class="check-label"><input type="checkbox" name="citp" value="АЦК-Планирования" checked> АЦК-Планирования</label>
+      </div>
+    </div>
+  </div>
+
+  <!-- Опции обработки -->
+  <div class="options-block">
+    <div class="options-title">Параметры</div>
+    <label class="check-label"><input type="checkbox" id="opt-one-file"> Один файл на сертификат</label>
+    <label class="check-label"><input type="checkbox" id="opt-skip-missing"> Пропускать ненайденных</label>
+    <label class="check-label"><input type="checkbox" id="opt-no-rename"> Не переименовывать .cer</label>
+  </div>
+
+  <!-- Кнопка и результат -->
+  <button class="btn-run" id="btn-run" disabled>
+    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+    Сформировать заявку
+  </button>
+
+  <div class="status-bar" id="status-bar" style="display:none"></div>
+
+  <a class="btn-download" id="btn-download" style="display:none" download>
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+    Скачать архив
+  </a>
+
+  <!-- Блок отправки письма (появляется после формирования) -->
+  <div id="email-section" style="display:none">
+    <div class="email-row">
+      <select id="fld-mail-svc" title="Почтовый сервис">
+        <option value="yandex">Яндекс Почта</option>
+        <option value="mailru">Mail.ru</option>
+        <option value="gmail">Gmail</option>
+        <option value="outlook">Outlook</option>
+      </select>
+      <input type="email" id="fld-email" placeholder="E-mail получателя" autocomplete="email">
+      <button class="btn-email" id="btn-email">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+        Написать письмо
+      </button>
+    </div>
+    <div class="email-note">
+      <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+      Откроет почтовый клиент. Архив прикрепите вручную — ограничение браузера.
+    </div>
+  </div>
+
+  <script src="lib/jszip.min.js"></script>
+  <script src="popup-data.js"></script>
+  <script type="module" src="popup.js"></script>
+  <div class="dev-footer">Разработчик: Уваров Г.Г. &nbsp;|&nbsp; 09.04.2026</div>
+</body>
+</html>

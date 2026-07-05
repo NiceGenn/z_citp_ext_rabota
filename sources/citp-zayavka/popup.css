@@ -1,0 +1,479 @@
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg:      #f8fafc;
+  --panel:   #ffffff;
+  --border:  #e2e8f0;
+  --text:    #1e293b;
+  --sub:     #64748b;
+  --accent:  #2563eb;
+  --green:   #059669;
+  --amber:   #d97706;
+  --red:     #dc2626;
+  --radius:  10px;
+}
+
+body {
+  width: 100%;
+  min-width: 340px;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  font-size: 13px;
+  background: var(--bg);
+  color: var(--text);
+  padding-bottom: 4px;
+}
+
+.check-label--dim {
+  opacity: 0.4;
+  cursor: default;
+  pointer-events: none;
+}
+
+.field-hint {
+  font-size: 11px;
+  color: var(--sub);
+  margin-top: 3px;
+}
+
+.dev-footer {
+  text-align: center;
+  font-size: 10px;
+  color: var(--sub);
+  padding: 6px 0 8px;
+  opacity: 0.7;
+}
+
+/* ── Шапка ── */
+.header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 16px 10px;
+  border-bottom: 1px solid var(--border);
+  background: #f0f4f8;
+}
+.header-logo {
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 1.5px;
+  color: var(--accent);
+  background: rgba(37,99,235,.1);
+  border: 1px solid rgba(37,99,235,.25);
+  border-radius: 5px;
+  padding: 2px 7px;
+}
+.header-title {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text);
+  flex: 1;
+}
+.header-ver { font-size: 10px; color: var(--sub); }
+
+/* ── Вшитый шаблон ── */
+.embedded-row {
+  display: flex;
+  gap: 8px;
+  padding: 8px 16px;
+  background: rgba(5,150,105,.05);
+  border-bottom: 1px solid var(--border);
+}
+.emb-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 11px;
+  color: var(--sub);
+}
+.emb-name { color: var(--green); font-weight: 500; }
+
+/* ── CTA: Загрузить базу ── */
+@keyframes cta-pulse {
+  0%   { box-shadow: 0 0 0 0   rgba(37,99,235,.55); }
+  70%  { box-shadow: 0 0 0 9px rgba(37,99,235,.0);  }
+  100% { box-shadow: 0 0 0 0   rgba(37,99,235,.0);  }
+}
+@keyframes cta-pulse-green {
+  0%   { box-shadow: 0 0 0 0   rgba(5,150,105,.4); }
+  70%  { box-shadow: 0 0 0 7px rgba(5,150,105,.0); }
+  100% { box-shadow: 0 0 0 0   rgba(5,150,105,.0); }
+}
+
+.cta-db-btn {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 10px 16px 0;
+  padding: 13px 16px;
+  background: rgba(37,99,235,.06);
+  border: 2px solid var(--accent);
+  border-radius: var(--radius);
+  cursor: pointer;
+  transition: background .15s, border-color .15s;
+  animation: cta-pulse 1.8s ease-out infinite;
+  color: var(--accent);
+}
+.cta-db-btn:hover {
+  background: rgba(37,99,235,.12);
+}
+.cta-db-btn.has-file {
+  background: rgba(5,150,105,.06);
+  border-color: var(--green);
+  animation: none;
+  color: var(--green);
+}
+.cta-icon { flex-shrink: 0; }
+.cta-text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  flex: 1;
+}
+.cta-title {
+  font-size: 13px;
+  font-weight: 700;
+  color: inherit;
+}
+.cta-sub {
+  font-size: 11px;
+  color: var(--sub);
+}
+.cta-db-btn.has-file .cta-sub { color: var(--green); }
+.cta-arrow { flex-shrink: 0; color: var(--sub); }
+
+/* ── Малые кнопки загрузки ── */
+.upload-row {
+  display: flex;
+  gap: 8px;
+  padding: 6px 16px;
+  border-bottom: 1px solid var(--border);
+}
+.upload-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 11px;
+  color: var(--sub);
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 4px 10px;
+  cursor: pointer;
+  transition: background .15s, color .15s;
+}
+.upload-btn:hover { background: #e2e8f0; color: var(--text); }
+.upload-btn.has-file { color: var(--green); border-color: rgba(5,150,105,.35); }
+
+/* ── Бейдж «в разработке» ── */
+.wip-badge {
+  display: inline-block;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: .3px;
+  text-transform: uppercase;
+  color: #92400e;
+  background: #fef3c7;
+  border: 1px solid #fde68a;
+  border-radius: 4px;
+  padding: 1px 5px;
+  margin-left: 5px;
+  vertical-align: middle;
+  line-height: 1.6;
+}
+
+/* ── CTA: Drop zone сертификатов ── */
+@keyframes dz-pulse {
+  0%   { box-shadow: 0 0 0 0   rgba(37,99,235,.45); border-color: var(--accent); }
+  70%  { box-shadow: 0 0 0 8px rgba(37,99,235,.0);  border-color: var(--accent); }
+  100% { box-shadow: 0 0 0 0   rgba(37,99,235,.0);  border-color: var(--accent); }
+}
+
+.drop-zone {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  margin: 10px 16px 0;
+  padding: 22px 16px;
+  background: rgba(37,99,235,.04);
+  border: 2px solid var(--accent);
+  border-radius: var(--radius);
+  cursor: pointer;
+  transition: background .15s;
+  color: var(--accent);
+  text-align: center;
+  animation: dz-pulse 1.8s ease-out infinite;
+}
+.drop-zone.drag-over {
+  background: rgba(37,99,235,.10);
+  animation: none;
+}
+.drop-zone.has-file {
+  background: rgba(5,150,105,.05);
+  border-color: rgba(5,150,105,.5);
+  color: var(--green);
+  animation: none;
+}
+.dz-label { font-size: 13px; font-weight: 700; color: inherit; }
+.dz-sub   { font-size: 11px; color: var(--sub); }
+
+/* ── Список сертификатов ── */
+#cert-list {
+  margin: 6px 16px 0;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  max-height: 90px;
+  overflow-y: auto;
+}
+.cert-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+  color: var(--sub);
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 4px 10px;
+}
+.cert-item svg { flex-shrink: 0; color: var(--green); }
+.cert-remove {
+  margin-left: auto;
+  background: none;
+  border: none;
+  color: var(--sub);
+  cursor: pointer;
+  font-size: 15px;
+  line-height: 1;
+  padding: 0 3px;
+  border-radius: 3px;
+  flex-shrink: 0;
+  transition: color .15s, background .15s;
+}
+.cert-remove:hover { color: var(--red); background: rgba(220,38,38,.08); }
+
+/* ── Очистить всё ── */
+#cert-clear-row {
+  display: flex;
+  justify-content: flex-end;
+  padding: 3px 16px 0;
+}
+.btn-clear-all {
+  background: none;
+  border: none;
+  font-size: 11px;
+  color: var(--sub);
+  cursor: pointer;
+  padding: 2px 4px;
+  border-radius: 4px;
+  transition: color .15s, background .15s;
+}
+.btn-clear-all:hover { color: var(--red); background: rgba(220,38,38,.08); }
+
+/* ── Поля ── */
+.options-block .field-row { display: flex; gap: 8px; }
+.field-row { display: flex; gap: 8px; }
+.field { display: flex; flex-direction: column; gap: 4px; flex: 1; }
+.field-sm { flex: 0 0 130px; }
+.field label {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: .6px;
+  text-transform: uppercase;
+  color: var(--sub);
+}
+.field input, .field select {
+  background: #f1f5f9;
+  border: 1px solid var(--border);
+  border-radius: 7px;
+  padding: 6px 10px;
+  font-size: 12px;
+  color: var(--text);
+  outline: none;
+  transition: border-color .15s;
+  width: 100%;
+}
+.field select {
+  cursor: pointer;
+  appearance: none;
+  -webkit-appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2.5'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 8px center;
+  background-color: #f1f5f9;
+  padding-right: 28px;
+}
+.field input:focus, .field select:focus { border-color: var(--accent); }
+
+/* ── Чекбоксы ЦИТП ── */
+.citp-checks {
+  display: flex;
+  gap: 14px;
+  flex-wrap: wrap;
+  padding: 5px 2px;
+}
+.check-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 12px;
+  color: var(--text);
+  cursor: pointer;
+  user-select: none;
+}
+.check-label input[type="checkbox"] {
+  width: 14px;
+  height: 14px;
+  accent-color: var(--accent);
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+/* ── Опции ── */
+.options-block {
+  margin: 10px 16px 0;
+  padding: 8px 12px;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+.options-title {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: .6px;
+  text-transform: uppercase;
+  color: var(--sub);
+  margin-bottom: 2px;
+}
+
+/* ── Кнопка сформировать ── */
+.btn-run {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: calc(100% - 32px);
+  margin: 12px 16px 0;
+  padding: 10px;
+  background: var(--accent);
+  color: #fff;
+  border: none;
+  border-radius: var(--radius);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background .15s, opacity .15s;
+}
+.btn-run:hover:not(:disabled) { background: #1d4ed8; }
+.btn-run:disabled { opacity: .4; cursor: not-allowed; }
+.btn-run.running { background: #4338ca; }
+
+/* ── Статус ── */
+.status-bar {
+  margin: 8px 16px 0;
+  padding: 8px 12px;
+  border-radius: 7px;
+  font-size: 11px;
+  line-height: 1.5;
+  white-space: pre-wrap;
+  word-break: break-all;
+}
+.status-bar.ok  { background: rgba(5,150,105,.08);  color: #065f46; border: 1px solid rgba(5,150,105,.2); }
+.status-bar.err { background: rgba(220,38,38,.08);  color: #991b1b; border: 1px solid rgba(220,38,38,.2); }
+.status-bar.info{ background: rgba(37,99,235,.08);  color: #1e40af; border: 1px solid rgba(37,99,235,.2); }
+
+/* ── Кнопка скачать ── */
+.btn-download {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: calc(100% - 32px);
+  margin: 8px 16px 0;
+  padding: 9px;
+  background: rgba(5,150,105,.1);
+  color: #065f46;
+  border: 1px solid rgba(5,150,105,.3);
+  border-radius: var(--radius);
+  font-size: 13px;
+  font-weight: 600;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background .15s;
+}
+.btn-download:hover { background: rgba(5,150,105,.18); }
+
+/* ── Блок email ── */
+#email-section {
+  margin: 6px 16px 0;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+.email-row {
+  display: flex;
+  gap: 6px;
+}
+#fld-mail-svc {
+  flex: 0 0 auto;
+  background: #f1f5f9;
+  border: 1px solid var(--border);
+  border-radius: 7px;
+  padding: 7px 24px 7px 8px;
+  font-size: 12px;
+  color: var(--text);
+  outline: none;
+  cursor: pointer;
+  appearance: none;
+  -webkit-appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2.5'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 6px center;
+  background-color: #f1f5f9;
+  transition: border-color .15s;
+}
+#fld-mail-svc:focus { border-color: var(--accent); }
+.email-row input[type="email"] {
+  flex: 1;
+  background: #f1f5f9;
+  border: 1px solid var(--border);
+  border-radius: 7px;
+  padding: 7px 10px;
+  font-size: 12px;
+  color: var(--text);
+  outline: none;
+  transition: border-color .15s;
+  min-width: 0;
+}
+.email-row input[type="email"]:focus { border-color: var(--accent); }
+.email-row input[type="email"]::placeholder { color: #94a3b8; }
+.btn-email {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 14px;
+  background: var(--accent);
+  color: #fff;
+  border: none;
+  border-radius: 7px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background .15s;
+  flex-shrink: 0;
+}
+.btn-email:hover { background: #1d4ed8; }
+.email-note {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 10px;
+  color: var(--sub);
+  padding: 0 2px;
+}

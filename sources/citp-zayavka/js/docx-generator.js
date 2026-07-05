@@ -63,7 +63,9 @@ export async function fillDocxTemplate(entries, action) {
   let dateRow = null;
   for (let i = 0; i < Math.min(20, allRows.length); i++) {
     const txt = allRows[i].textContent || '';
-    if (txt.includes('«___»') || txt.includes('20__') || txt.includes('202_') || (txt.includes('г.') && txt.length < 50)) {
+    if (txt.includes('«___»') || txt.includes('20__') || txt.includes('202_') ||
+        (/\d{1,2}\.\d{2}\.\d{4}/.test(txt) && txt.length < 30) ||
+        (txt.includes('г.') && txt.length < 50)) {
       dateRow = allRows[i];
       break;
     }
@@ -106,12 +108,23 @@ export async function fillDocxTemplate(entries, action) {
     }
   }
 
-  const insertBeforeNode = (headerIndex !== -1 && allRows[headerIndex + 1]) ? allRows[headerIndex + 1] : allRows[12];
+  const insertBeforeNode = headerIndex !== -1 ? (allRows[headerIndex + 1] || null) : (allRows[12] || null);
 
-  // Сохраняем ссылки на строки-заглушки ДО вставки новых строк
-  const stubRows = headerIndex !== -1
-    ? Array.from(allRows).slice(headerIndex + 1)
-    : [allRows[12], allRows[13]].filter(Boolean);
+  // Строки-заглушки — идущие сразу за заголовком строки ТОЙ ЖЕ структуры
+  // (столько же ячеек, сколько в заголовке). Останавливаемся на первой строке
+  // иной структуры, чтобы не стирать примечания/итоги ниже таблицы — важно для
+  // пользовательских шаблонов. Ссылки берём ДО вставки новых строк.
+  let stubRows;
+  if (headerIndex !== -1) {
+    const headerCellCount = allRows[headerIndex].querySelectorAll('tc').length;
+    stubRows = [];
+    for (let i = headerIndex + 1; i < allRows.length; i++) {
+      if (allRows[i].querySelectorAll('tc').length !== headerCellCount) break;
+      stubRows.push(allRows[i]);
+    }
+  } else {
+    stubRows = [allRows[12], allRows[13]].filter(Boolean);
+  }
 
   entries.forEach(e => {
     const isNotFound = e.username === '*** НЕ НАЙДЕН ***';

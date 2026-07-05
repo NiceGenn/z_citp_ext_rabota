@@ -231,6 +231,18 @@ function parseX509DER(bytes) {
 }
 
 export async function parseCert(file) {
-  const buf   = await file.arrayBuffer();
-  return parseX509DER(new Uint8Array(buf));
+  const buf = await file.arrayBuffer();
+  let bytes = new Uint8Array(buf);
+  // .cer может быть в PEM (base64 в обёртке -----BEGIN CERTIFICATE-----).
+  // DER начинается с 0x30; PEM — с '-' (0x2D). Декодируем PEM → DER.
+  if (bytes[0] === 0x2d) {
+    const text = new TextDecoder('latin1').decode(bytes);
+    const m = text.match(/-----BEGIN [^-]+-----([\s\S]*?)-----END/);
+    if (m) {
+      const bin = atob(m[1].replace(/\s+/g, ''));
+      bytes = new Uint8Array(bin.length);
+      for (let i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
+    }
+  }
+  return parseX509DER(bytes);
 }

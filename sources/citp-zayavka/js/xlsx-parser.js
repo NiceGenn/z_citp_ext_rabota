@@ -13,6 +13,14 @@ export function normalizeSystem(s) {
   return SYSTEM_ALIASES[s.toLowerCase().trim()] || s.trim();
 }
 
+// Буква столбца из ссылки ячейки ("C2" → 2 для A→0). OOXML пропускает пустые
+// ячейки, поэтому читать их по порядковому индексу нельзя — только по столбцу.
+function colToIndex(letters) {
+  let n = 0;
+  for (let i = 0; i < letters.length; i++) n = n * 26 + (letters.charCodeAt(i) - 64);
+  return n - 1;
+}
+
 export async function loadDatabase(file) {
   try {
     const zip = await JSZip.loadAsync(file);
@@ -57,17 +65,28 @@ export async function loadDatabase(file) {
 
     shDoc.querySelectorAll('sheetData > row').forEach(row => {
       if (first) { first = false; return; }
-      const cells  = row.querySelectorAll('c');
+      // Раскладываем ячейки по буквенному индексу столбца (A→0, B→1, …):
+      // позиционный индекс ломается, если в строке пропущены пустые ячейки.
+      const byCol = {};
+      row.querySelectorAll('c').forEach(c => {
+        const m = (c.getAttribute('r') || '').match(/^([A-Z]+)/);
+        if (m) byCol[colToIndex(m[1])] = c;
+      });
       const getVal = c => {
         if (!c) return '';
+        // Инлайн-строка: текст лежит в <is>, а не в <v>.
+        if (c.getAttribute('t') === 'inlineStr') {
+          const is = c.querySelector('is');
+          return is ? is.textContent : '';
+        }
         const v = c.querySelector('v');
         if (!v) return '';
         return c.getAttribute('t') === 's' ? (strings[parseInt(v.textContent)] || '') : v.textContent;
       };
-      const colB = getVal(cells[1]);
-      const colC = getVal(cells[2]);
-      const colD = getVal(cells[3]);
-      const colE = getVal(cells[4]);
+      const colB = getVal(byCol[1]);
+      const colC = getVal(byCol[2]);
+      const colD = getVal(byCol[3]);
+      const colE = getVal(byCol[4]);
       if (colC && colB) db.push({
         fio:    colC.trim(),
         login:  colB.trim(),

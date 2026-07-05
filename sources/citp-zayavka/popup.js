@@ -67,7 +67,7 @@ function initUI() {
   dzCert.addEventListener('drop', e => {
     e.preventDefault();
     dzCert.classList.remove('drag-over');
-    const files = Array.from(e.dataTransfer.files).filter(f => f.name.endsWith('.cer'));
+    const files = Array.from(e.dataTransfer.files).filter(f => /\.cer$/i.test(f.name));
     addCerts(files);
   });
 
@@ -258,7 +258,7 @@ async function runProcess() {
       return;
     }
 
-    const dateStr = new Date().toLocaleDateString('ru-RU', { day:'2-digit', month:'2-digit', year:'numeric' }).replace(/\./g, '.');
+    const dateStr = new Date().toLocaleDateString('ru-RU', { day:'2-digit', month:'2-digit', year:'numeric' });
     const outZip  = new JSZip();
 
     if (optOneFile) {

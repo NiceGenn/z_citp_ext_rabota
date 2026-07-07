@@ -41,6 +41,14 @@ bash tools/build-release.sh        # → releases/citp-zayavka_v<версия>.z
 Скрипт читает `version` из manifest, кладёт `manifest.json` в корень архива,
 исключает `*.md` и ОС-мусор. Прежние версии в `releases/` сохраняются.
 
+**Всегда после сборки давать ссылку на релиз** в ответе — на zip в GitHub на
+текущей ветке (owner/repo/ветка берём из `git remote`/текущей ветки):
+
+```
+https://github.com/<owner>/<repo>/blob/<branch>/releases/citp-zayavka_v<версия>.zip   ← страница файла
+https://github.com/<owner>/<repo>/raw/<branch>/releases/citp-zayavka_v<версия>.zip    ← прямое скачивание
+```
+
 ## Как проверить расширение в браузере
 
 1. `browser://extensions/` (Яндекс) или `chrome://extensions/`.
